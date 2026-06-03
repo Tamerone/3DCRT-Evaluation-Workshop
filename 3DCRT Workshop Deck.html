@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3DCRT Plan Evaluation Workshop — UCT/GSH 2026</title>
+<style>deck-stage:not(:defined){visibility:hidden}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0e2841;
+  --navy2:#163554;
+  --navy3:#1e4a6e;
+  --cyan:#0f9ed5;
+  --cyan2:#0bc4f0;
+  --orange:#e97132;
+  --green:#29a35b;
+  --red:#d44040;
+  --white:#e8edf2;
+  --dim:rgba(232,237,242,0.55);
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+body{background:#000;font-family:var(--sans);}
+section{
+  width:100%;height:100%;
+  background:var(--navy);
+  color:var(--white);
+  position:relative;
+  overflow:hidden;
+}
+/* ensure decorative numbers stay clipped inside the section */
+
+/* ── shared layout helpers ── */
+.slide-inner{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  padding:72px 96px 56px;
+}
+.slide-label{
+  font-family:var(--mono);font-size:24px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--cyan);margin-bottom:24px;
+}
+.slide-rule{
+  width:64px;height:3px;background:var(--cyan);
+  border-radius:2px;margin-bottom:36px;
+}
+h1{font-size:72px;font-weight:800;line-height:1.08;letter-spacing:-.02em;color:#fff;}
+h2{font-size:52px;font-weight:700;line-height:1.1;letter-spacing:-.02em;color:#fff;}
+h3{font-size:36px;font-weight:600;line-height:1.2;color:#fff;}
+.sub{font-size:26px;font-weight:400;color:var(--dim);line-height:1.4;margin-top:16px;}
+.body-text{font-size:24px;line-height:1.55;color:var(--dim);}
+
+/* ── decorative bg shapes ── */
+.bg-circle{
+  position:absolute;border-radius:50%;
+  background:rgba(15,158,213,.06);pointer-events:none;
+}
+
+/* ── grid two-col ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:64px;flex:1;align-items:start;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;flex:1;align-items:start;}
+
+/* ── cards ── */
+.card{
+  background:var(--navy2);border-radius:16px;
+  padding:32px 36px;border:1px solid rgba(15,158,213,.15);
+}
+.card-label{
+  font-family:var(--mono);font-size:20px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;
+  color:var(--cyan);margin-bottom:12px;display:block;
+}
+.card h3{font-size:26px;font-weight:700;margin-bottom:12px;}
+.card p{font-size:20px;color:var(--dim);line-height:1.55;}
+
+/* ── bullet list ── */
+ul.blist{list-style:none;display:flex;flex-direction:column;gap:18px;}
+ul.blist li{
+  font-size:24px;color:var(--dim);line-height:1.4;
+  padding-left:28px;position:relative;
+}
+ul.blist li::before{
+  content:'';position:absolute;left:0;top:.55em;
+  width:8px;height:8px;border-radius:50%;background:var(--cyan);
+}
+ul.blist li strong{color:var(--white);}
+
+/* ── tag pills ── */
+.tag{
+  display:inline-block;font-family:var(--mono);font-size:20px;
+  font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  padding:6px 16px;border-radius:20px;margin-right:10px;
+}
+.tag-c{background:rgba(212,64,64,.15);color:#f06a6a;border:1px solid rgba(212,64,64,.3);}
+.tag-g{background:rgba(41,163,91,.15);color:#4ec97a;border:1px solid rgba(41,163,91,.3);}
+.tag-w{background:rgba(233,113,50,.15);color:#f09050;border:1px solid rgba(233,113,50,.3);}
+.tag-b{background:rgba(15,158,213,.15);color:var(--cyan);border:1px solid rgba(15,158,213,.3);}
+
+/* ── finding rows ── */
+.finding{
+  display:flex;align-items:flex-start;gap:20px;
+  font-size:22px;color:var(--dim);line-height:1.45;
+  padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.finding:last-child{border-bottom:none;}
+.finding .f-tag{flex-shrink:0;}
+.finding strong{color:var(--white);}
+
+/* ── fcb grid ── */
+.fcb-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;flex:1;
+}
+.fcb-cell{
+  background:var(--navy2);border-radius:12px;
+  padding:24px 20px;
+  border:1px solid rgba(15,158,213,.12);
+  display:flex;flex-direction:column;gap:8px;
+}
+.fcb-letter{
+  font-size:52px;font-weight:800;color:var(--cyan);
+  font-family:var(--mono);line-height:1;
+}
+.fcb-word{
+  font-size:15px;font-weight:700;color:var(--white);
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.fcb-desc{font-size:17px;color:var(--dim);line-height:1.4;margin-top:4px;}
+
+/* ── timer badge ── */
+.timer{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(233,113,50,.12);border:1px solid rgba(233,113,50,.3);
+  border-radius:24px;padding:8px 20px;
+  font-family:var(--mono);font-size:16px;font-weight:600;
+  color:var(--orange);
+}
+.timer::before{content:'⏱';font-style:normal;}
+
+/* ── section opener ── */
+.section-opener{
+  background:linear-gradient(135deg,#0b1f35 0%,#0e2841 60%,#122f4a 100%);
+}
+.section-num{
+  font-size:200px;font-weight:800;color:rgba(15,158,213,.07);
+  font-family:var(--mono);line-height:1;
+  position:absolute;right:80px;bottom:-20px;letter-spacing:-.04em;
+}
+.case-opener{
+  background:linear-gradient(135deg,#0b1f35 0%,#0f2d48 100%);
+}
+
+/* ── highlight box ── */
+.hbox{
+  border-radius:14px;padding:28px 36px;
+  background:var(--navy2);border-left:4px solid var(--cyan);
+}
+.hbox.warn{border-left-color:var(--orange);background:rgba(233,113,50,.06);}
+.hbox.good{border-left-color:var(--green);background:rgba(41,163,91,.06);}
+.hbox.crit{border-left-color:var(--red);background:rgba(212,64,64,.06);}
+.hbox p{font-size:22px;color:var(--dim);line-height:1.5;}
+.hbox strong{color:var(--white);}
+
+/* ── teaching moment slide ── */
+.teach-bg{
+  background:linear-gradient(135deg,#0b2a1c 0%,#0e2841 50%,#0b2a1c 100%);
+}
+.teach-label{
+  font-family:var(--mono);font-size:24px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.08em;color:var(--green);
+  margin-bottom:20px;
+}
+
+/* ── image slot wrapper ── */
+.slot-wrap{
+  background:rgba(255,255,255,.03);border:2px dashed rgba(15,158,213,.25);
+  border-radius:14px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;
+  padding:12px;
+}
+.slot-caption{
+  font-family:var(--mono);font-size:20px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.06em;
+  color:rgba(15,158,213,.7);text-align:center;margin-top:8px;
+}
+
+/* ── title slide ── */
+.title-bg{
+  background:radial-gradient(ellipse at 20% 50%,rgba(15,158,213,.12) 0%,transparent 65%),
+             linear-gradient(160deg,#0b1f35 0%,#0e2841 100%);
+}
+.eyebrow{
+  font-family:var(--mono);font-size:24px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--cyan);
+  margin-bottom:28px;
+}
+
+/* ── agenda table ── */
+.agenda{width:100%;border-collapse:collapse;}
+.agenda tr{border-bottom:1px solid rgba(255,255,255,.07);}
+.agenda tr:last-child{border-bottom:none;}
+.agenda td{padding:18px 0;vertical-align:middle;font-size:24px;color:var(--dim);}
+.agenda td:first-child{font-family:var(--mono);font-size:22px;color:var(--orange);font-weight:600;width:130px;}
+.agenda td:last-child{font-family:var(--mono);font-size:22px;color:var(--cyan);font-weight:500;width:180px;text-align:right;}
+.agenda td strong{color:var(--white);}
+
+/* ── serial/parallel ── */
+.oar-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;}
+.oar-card{background:var(--navy2);border-radius:16px;padding:36px 40px;border:1px solid rgba(255,255,255,.08);}
+.oar-card.serial{border-top:3px solid var(--orange);}
+.oar-card.parallel{border-top:3px solid var(--cyan);}
+.oar-card h3{font-size:30px;font-weight:700;margin-bottom:8px;}
+.oar-metric{
+  font-family:var(--mono);font-size:22px;font-weight:600;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);
+  margin-bottom:20px;
+}
+.oar-metric.serial{color:var(--orange);}
+.oar-metric.parallel{color:var(--cyan);}
+.oar-ex{font-size:18px;color:var(--dim);line-height:1.6;}
+
+/* ── scorecard tiers ── */
+.tier-row{
+  display:flex;align-items:center;gap:28px;
+  padding:20px 28px;border-radius:12px;margin-bottom:14px;
+  font-size:22px;
+}
+.tier-row.crit{background:rgba(212,64,64,.1);border:1px solid rgba(212,64,64,.2);}
+.tier-row.major{background:rgba(233,113,50,.08);border:1px solid rgba(233,113,50,.2);}
+.tier-row.minor{background:rgba(15,158,213,.06);border:1px solid rgba(15,158,213,.15);}
+.tier-badge{
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  padding:6px 16px;border-radius:20px;white-space:nowrap;
+}
+.crit .tier-badge{background:rgba(212,64,64,.2);color:#f06a6a;}
+.major .tier-badge{background:rgba(233,113,50,.15);color:var(--orange);}
+.minor .tier-badge{background:rgba(15,158,213,.1);color:var(--cyan);}
+
+/* ── wrap-up ── */
+.takeaway{
+  display:flex;align-items:flex-start;gap:24px;
+  padding:22px 0;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.takeaway:last-child{border-bottom:none;}
+.tk-num{
+  font-family:var(--mono);font-size:40px;font-weight:800;
+  color:rgba(15,158,213,.3);line-height:1;flex-shrink:0;width:56px;
+}
+.tk-text{font-size:23px;color:var(--dim);line-height:1.5;}
+.tk-text strong{color:var(--white);}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 01 — TITLE
+     ══════════════════════════════════════════════ -->
+<section class="title-bg" data-label="Title">
+<div class="bg-circle" style="width:900px;height:900px;right:-200px;top:-250px;"></div>
+<div class="bg-circle" style="width:400px;height:400px;left:-100px;bottom:-100px;"></div>
+<div class="slide-inner" style="justify-content:center;gap:0;">
+  <p class="eyebrow" style="font-size:24px;">Radiation Oncology · UCT / GSH Registrar Training · 2026</p>
+  <h1 style="font-size:96px;max-width:1100px;margin-bottom:28px;">What Makes<br>a Plan Good?</h1>
+  <p class="sub" style="font-size:32px;max-width:760px;margin-bottom:64px;">3DCRT Plan Evaluation Workshop — Theory &amp; Practical</p>
+  <div style="display:flex;align-items:center;gap:40px;">
+    <div style="width:3px;height:56px;background:var(--cyan);border-radius:2px;"></div>
+    <div>
+      <p style="font-size:26px;color:var(--white);font-weight:600;">Tamerone Manasse</p>
+      <p style="font-size:24px;color:var(--dim);margin-top:4px;">UCT / GSH Registrars · 2026</p>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 02 — SESSION MAP
+     ══════════════════════════════════════════════ -->
+<section data-label="Session Map">
+<div class="slide-inner">
+  <p class="slide-label">How this session runs</p>
+  <div class="slide-rule"></div>
+  <div class="two-col" style="align-items:start;gap:80px;">
+    <div>
+      <h2 style="font-size:44px;margin-bottom:36px;">2 Hours. 3 Cases.<br>One framework.</h2>
+      <table class="agenda">
+        <tr><td>0:00</td><td><strong>Theory</strong> — framework, DVH, OARs, red flags</td><td>12 min</td></tr>
+        <tr><td>0:12</td><td><strong>Case 1:</strong> Breast (Bad → Acceptable → Good)</td><td>25 min</td></tr>
+        <tr><td>0:37</td><td><strong>Case 2:</strong> Prostate — trade-off</td><td>20 min</td></tr>
+        <tr><td>0:57</td><td><strong>Case 3:</strong> Pituitary — coplanar vs non-coplanar</td><td>18 min</td></tr>
+        <tr><td>1:15</td><td>Buffer / questions / overflow</td><td>15 min</td></tr>
+        <tr><td>1:30</td><td><strong>Wrap-up</strong> + self-study cases</td><td>10 min</td></tr>
+      </table>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px;padding-top:8px;">
+      <div class="hbox" style="margin-bottom:0;">
+        <span class="card-label">By the end you can…</span>
+        <ul class="blist" style="gap:14px;">
+          <li style="font-size:22px;">Apply <strong>FCB-CHOPS</strong> — a complete evaluation checklist</li>
+          <li style="font-size:22px;">Read a DVH and extract coverage &amp; OAR numbers</li>
+          <li style="font-size:22px;">Apply OAR constraints using serial / parallel logic</li>
+          <li style="font-size:22px;">Triage: critical, major, minor</li>
+          <li style="font-size:22px;">Judge technical quality of a 3DCRT plan</li>
+        </ul>
+      </div>
+      <div class="hbox warn" style="margin-bottom:0;">
+        <p style="font-size:21px;"><strong>Gynae + H&amp;N:</strong> Self-study cases — full scorecards and discussion notes are in the workshop tool. Work through them before next contact.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 03 — THE CENTRAL QUESTION
+     ══════════════════════════════════════════════ -->
+<section data-label="Central Question">
+<div class="slide-inner">
+  <p class="slide-label">The central question</p>
+  <div class="slide-rule"></div>
+  <h2 style="margin-bottom:40px;">A good plan answers four questions</h2>
+  <div class="three-col" style="grid-template-columns:1fr 1fr 1fr 1fr;gap:24px;">
+    <div class="card" style="border-top:3px solid var(--cyan);">
+      <span class="card-label" style="font-size:36px;color:var(--cyan);font-weight:800;letter-spacing:-.02em;">01</span>
+      <h3 style="font-size:22px;margin-bottom:10px;">Does it treat the target?</h3>
+      <p style="font-size:18px;">Adequate dose to the whole target — no geographic miss, no cold spot where tumour lives.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--cyan);">
+      <span class="card-label" style="font-size:36px;color:var(--cyan);font-weight:800;letter-spacing:-.02em;">02</span>
+      <h3 style="font-size:22px;margin-bottom:10px;">Does it spare normal tissue?</h3>
+      <p style="font-size:18px;">Every OAR within tolerance — judged against the right dose-volume metric for that organ.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--cyan);">
+      <span class="card-label" style="font-size:36px;color:var(--cyan);font-weight:800;letter-spacing:-.02em;">03</span>
+      <h3 style="font-size:22px;margin-bottom:10px;">Is it technically sound?</h3>
+      <p style="font-size:18px;">Sensible isocentre, beam angles, weighting — the plan is built, not just generated.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--cyan);">
+      <span class="card-label" style="font-size:36px;color:var(--cyan);font-weight:800;letter-spacing:-.02em;">04</span>
+      <h3 style="font-size:22px;margin-bottom:10px;">Is it deliverable &amp; robust?</h3>
+      <p style="font-size:18px;">Achievable on the machine, stable to setup variation. Undeliverable ≠ good.</p>
+    </div>
+  </div>
+  <div class="hbox" style="margin-top:28px;">
+    <p>"A plan is never perfect — it is the <strong>best defensible compromise.</strong> Every trade-off articulated. Every OAR decision documented."</p>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 04 — FCB-CHOPS
+     ══════════════════════════════════════════════ -->
+<section data-label="FCB-CHOPS">
+<div class="slide-inner">
+  <p class="slide-label">A systematic framework</p>
+  <div class="slide-rule"></div>
+  <h2 style="margin-bottom:32px;">FCB-CHOPS — a checklist for every plan</h2>
+  <div class="fcb-grid" style="grid-template-columns:repeat(8,1fr);gap:14px;flex:1;">
+    <div class="fcb-cell"><div class="fcb-letter">F</div><div class="fcb-word">Fusion</div><div class="fcb-desc">Image fusion accuracy — correct target &amp; OAR anatomy</div></div>
+    <div class="fcb-cell"><div class="fcb-letter">C</div><div class="fcb-word">Contours</div><div class="fcb-desc">All target &amp; OAR contours complete and correct</div></div>
+    <div class="fcb-cell"><div class="fcb-letter">B</div><div class="fcb-word">Beams</div><div class="fcb-desc">Beam geometry and entry points appropriate for the target</div></div>
+    <div class="fcb-cell"><div class="fcb-letter">C</div><div class="fcb-word">Coverage</div><div class="fcb-desc">Prescribed dose adequately covers the target volume</div></div>
+    <div class="fcb-cell"><div class="fcb-letter">H</div><div class="fcb-word">Hotspots</div><div class="fcb-desc">Dose variation — acceptable high and low dose regions</div></div>
+    <div class="fcb-cell"><div class="fcb-letter">O</div><div class="fcb-word">OARs</div><div class="fcb-desc">OAR doses respect clinical constraints</div></div>
+    <div class="fcb-cell"><div class="fcb-letter">P</div><div class="fcb-word">Prescription</div><div class="fcb-desc">Correct dose, fractionation, normalisation documented</div></div>
+    <div class="fcb-cell"><div class="fcb-letter">S</div><div class="fcb-word">Summation</div><div class="fcb-desc">Cumulative dose from all courses — or acknowledge none</div></div>
+  </div>
+  <p class="body-text" style="margin-top:22px;font-size:19px;">Start with <strong style="color:var(--white);">Prescription</strong> — it defines intent. Work in whatever order the plan demands; the letters are a safety net, not a script.</p>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 05 — DVH + COVERAGE METRICS
+     ══════════════════════════════════════════════ -->
+<section data-label="DVH + Coverage">
+<div class="slide-inner">
+  <p class="slide-label">Block 1 · Target Coverage</p>
+  <div class="slide-rule"></div>
+  <div class="two-col">
+    <div>
+      <h2 style="font-size:40px;margin-bottom:28px;">The DVH — your primary instrument</h2>
+      <ul class="blist" style="gap:16px;margin-bottom:28px;">
+        <li style="font-size:21px;">Every point answers: <strong>what volume gets at least this dose?</strong></li>
+        <li style="font-size:21px;">Read <em>up</em> from a dose → <strong>V-metric</strong> (e.g. V95)</li>
+        <li style="font-size:21px;">Read <em>across</em> from a volume → <strong>D-metric</strong> (e.g. D95)</li>
+        <li style="font-size:21px;">ICRU 83 prefers <strong>D-metrics</strong> — statistically stable</li>
+        <li style="font-size:21px;color:#f06a6a;"><strong>No spatial information</strong> — never tells you WHERE the cold or hot sits</li>
+      </ul>
+      <div class="hbox warn" style="padding:20px 26px;">
+        <p style="font-size:19px;">The DVH <strong>screens</strong>; the isodose slices <strong>diagnose</strong>. Always scroll before you read the DVH.</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card" style="border-left:3px solid var(--cyan);border-radius:12px;">
+        <span class="card-label">Coverage — key numbers</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px;">
+          <div><p style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--cyan);">D95</p><p style="font-size:18px;color:var(--dim);margin-top:6px;">≥95% of prescription. Near-minimum for the PTV.</p></div>
+          <div><p style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--orange);">D2</p><p style="font-size:18px;color:var(--dim);margin-top:6px;">&lt;107% (ICRU 83). Near-maximum — hotspot criterion.</p></div>
+          <div><p style="font-family:var(--mono);font-size:26px;font-weight:700;color:#4ec97a;">HI</p><p style="font-size:18px;color:var(--dim);margin-top:6px;">(D2−D98) ÷ D50. &lt;0.1 good, &lt;0.15 acceptable.</p></div>
+          <div><p style="font-family:var(--mono);font-size:26px;font-weight:700;color:rgba(15,158,213,.5);">CI</p><p style="font-size:18px;color:var(--dim);margin-top:6px;">PIV ÷ TV. Ideal 1.0–1.2; higher expected in 3DCRT.</p></div>
+        </div>
+      </div>
+      <div class="card" style="padding:22px 28px;">
+        <span class="card-label">Coverage is negotiable</span>
+        <p style="font-size:19px;color:var(--dim);line-height:1.5;">Where PTV abuts a serial OAR — accept a small underdose at the overlap. <strong style="color:var(--white);">Safety wins.</strong> Know where the cold sits: PTV margin vs CTV reach are very different problems.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 06 — SERIAL vs PARALLEL
+     ══════════════════════════════════════════════ -->
+<section data-label="Serial vs Parallel">
+<div class="slide-inner">
+  <p class="slide-label">Block 2 · OAR Constraints</p>
+  <div class="slide-rule"></div>
+  <h2 style="margin-bottom:32px;">Architecture decides the metric</h2>
+  <div class="oar-grid" style="gap:32px;">
+    <div class="oar-card serial">
+      <h3 style="color:var(--orange);">Serial organs</h3>
+      <div class="oar-metric serial">Metric: Dmax or D1cc</div>
+      <div class="oar-ex">
+        <p style="margin-bottom:12px;"><strong style="color:var(--white);">One failed sub-unit = organ failure.</strong> A small dose spike above tolerance causes irreversible damage — spinal cord, brainstem, optic chiasm, optic nerves.</p>
+        <p style="margin-bottom:12px;color:var(--orange);font-weight:600;">Apply a PRV margin. Evaluate the PRV, not the bare organ.</p>
+        <p>Hard limits: <span style="font-family:var(--mono);color:var(--white);">Cord ≤45 Gy · Brainstem ≤54 Gy · Chiasm ≤54 Gy</span></p>
+      </div>
+    </div>
+    <div class="oar-card parallel">
+      <h3 style="color:var(--cyan);">Parallel organs</h3>
+      <div class="oar-metric parallel">Metric: Mean dose or Vx Gy</div>
+      <div class="oar-ex">
+        <p style="margin-bottom:12px;"><strong style="color:var(--white);">Redundant sub-units — organ tolerates partial irradiation.</strong> Widespread low dose depletes functional reserve — lung, liver, kidney, parotid.</p>
+        <p style="margin-bottom:12px;">Mean dose predicts function loss; Vx sets the toxicity threshold.</p>
+        <p>Examples: <span style="font-family:var(--mono);color:var(--white);">Lung V20 &lt;30% · Parotid mean &lt;26 Gy · Rectum V70 &lt;20%</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="hbox" style="margin-top:28px;">
+    <p style="font-size:21px;"><strong>Mismatching the metric is a class of error.</strong> Reading Dmax off a parallel organ, or only checking mean dose on a serial organ, gives a false sense of safety. Match the organ architecture to its metric, every time.</p>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 07 — TIERS + REJECT
+     ══════════════════════════════════════════════ -->
+<section data-label="Tiers + Scorecard">
+<div class="slide-inner">
+  <p class="slide-label">Triage + your task</p>
+  <div class="slide-rule"></div>
+  <div class="two-col" style="gap:64px;">
+    <div>
+      <h2 style="font-size:40px;margin-bottom:28px;">Sort every finding into a tier</h2>
+      <div class="tier-row crit"><span class="tier-badge">Critical</span><span style="font-size:21px;color:var(--dim);">Re-plan required — geographic miss · serial OAR above hard limit · hot spot in critical organ</span></div>
+      <div class="tier-row major"><span class="tier-badge">Major</span><span style="font-size:21px;color:var(--dim);">Correct or justify — parallel OAR over constraint · V95 90–95% · avoidable beam through OAR</span></div>
+      <div class="tier-row minor"><span class="tier-badge">Minor</span><span style="font-size:21px;color:var(--dim);">Comment only — slightly high MU · non-ideal isocentre · minor inhomogeneity</span></div>
+      <div class="hbox crit" style="margin-top:20px;padding:20px 26px;">
+        <span class="card-label" style="color:#f06a6a;">Reject on sight if…</span>
+        <p style="font-size:19px;color:var(--dim);line-height:1.6;"><strong style="color:var(--white);">1</strong> Cold dose reaching into the CTV &nbsp;·&nbsp; <strong style="color:var(--white);">2</strong> Serial OAR exceeds a hard tolerance &nbsp;·&nbsp; <strong style="color:var(--white);">3</strong> Plan is unsafe or undeliverable</p>
+      </div>
+    </div>
+    <div>
+      <h2 style="font-size:40px;margin-bottom:28px;">Your task in each case</h2>
+      <ul class="blist" style="gap:18px;margin-bottom:28px;">
+        <li style="font-size:22px;"><strong>5 min solo</strong> — score every FCB-CHOPS row in the tool</li>
+        <li style="font-size:22px;"><strong>Name top 3 concerns</strong> before the ideal answer is revealed</li>
+        <li style="font-size:22px;"><strong>One person presents</strong> — class challenges and extends</li>
+        <li style="font-size:22px;"><strong>Ideal answers revealed</strong> — compare your scorecard</li>
+      </ul>
+      <div class="hbox" style="padding:20px 26px;">
+        <span class="card-label">The gut-check</span>
+        <p style="font-size:21px;">"Would I confidently treat my own family member with this plan?" — if not, name exactly what would have to change.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 08 — CASE 1 OPENER
+     ══════════════════════════════════════════════ -->
+<section class="case-opener" data-label="Case 1 Intro">
+<div class="section-num">01</div>
+<div class="slide-inner" style="justify-content:center;">
+  <p class="slide-label">Case 1 · Breast</p>
+  <div class="slide-rule"></div>
+  <h1 style="font-size:80px;margin-bottom:20px;">Whole-Breast Tangents</h1>
+  <p class="sub" style="font-size:28px;max-width:860px;margin-bottom:40px;">Three plans — bad, acceptable, good. Your job is to work out which is which, and <em>why</em>.</p>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:44px;">
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Prescription</span>
+      <p style="font-family:var(--mono);font-size:22px;color:var(--white);font-weight:600;">2.67 Gy × 15 = 40.05 Gy</p>
+      <p style="font-size:18px;color:var(--dim);margin-top:6px;">Whole-breast, right side, tangential fields</p>
+    </div>
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Technique</span>
+      <p style="font-size:20px;color:var(--dim);line-height:1.5;">3DCRT tangential fields · MLC shaped · possible FiF</p>
+    </div>
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Key OARs</span>
+      <p style="font-size:20px;color:var(--dim);line-height:1.5;">Heart · Ipsilateral lung · Contralateral breast</p>
+    </div>
+  </div>
+  <div class="timer" style="font-size:18px;">5 minutes — review Plan A in the workshop tool. Score every row before we discuss.</div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 09 — BREAST BAD PLAN (image slot)
+     ══════════════════════════════════════════════ -->
+<section data-label="Breast — Plan A (Bad)">
+<div class="slide-inner">
+  <p class="slide-label">Case 1 · Breast · Plan A — What do you see?</p>
+  <div class="slide-rule"></div>
+  <div class="two-col" style="gap:48px;align-items:start;flex:1;">
+    <div class="slot-wrap" style="flex:1;height:700px;justify-content:flex-start;padding:16px;">
+      <image-slot id="breast-bad-dvh" style="width:100%;height:320px;" shape="rounded" radius="10" placeholder="Drop DVH screenshot here"></image-slot>
+      <p class="slot-caption">DVH — Plan A</p>
+      <image-slot id="breast-bad-iso" style="width:100%;height:300px;margin-top:12px;" shape="rounded" radius="10" placeholder="Drop isodose screenshot here"></image-slot>
+      <p class="slot-caption">Isodose — Plan A</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <h2 style="font-size:38px;margin-bottom:8px;">Plan A — your findings?</h2>
+      <p class="body-text" style="font-size:21px;margin-bottom:12px;">Score the plan in the tool first. Then nominate your top three concerns.</p>
+      <div class="hbox" style="padding:20px 26px;">
+        <span class="card-label">Guide your eye to…</span>
+        <ul class="blist" style="gap:12px;">
+          <li style="font-size:20px;">Isocentre position — depth, tissue type</li>
+          <li style="font-size:20px;">Tangent field borders — crossing midline?</li>
+          <li style="font-size:20px;">Flash beyond breast tissue (≥2 cm?)</li>
+          <li style="font-size:20px;">Normalisation point location</li>
+          <li style="font-size:20px;">Hotspot magnitude and location</li>
+          <li style="font-size:20px;">Heart + lung on DVH</li>
+        </ul>
+      </div>
+      <div class="hbox warn" style="padding:18px 24px;">
+        <p style="font-size:19px;">What are your <strong>top three concerns</strong> before the reveal?</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 10 — BREAST DISCUSSION (Bad findings)
+     ══════════════════════════════════════════════ -->
+<section data-label="Breast — Bad Plan Findings">
+<div class="slide-inner">
+  <p class="slide-label">Case 1 · Breast · Plan A — Findings</p>
+  <div class="slide-rule"></div>
+  <div class="two-col" style="gap:56px;">
+    <div>
+      <h2 style="font-size:38px;margin-bottom:24px;">Plan A is the <span style="color:#f06a6a;">bad plan</span></h2>
+      <div class="finding"><span class="f-tag"><span class="tag tag-c">Critical</span></span><span>Normalisation point <strong>in lung</strong> — dosimetrically unstable; whole distribution scales off an unreliable reference</span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-c">Critical</span></span><span>Hotspot <strong>&gt;115%</strong> — unacceptable magnitude; location outside PTV compounds risk</span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-c">Critical</span></span><span><strong>Heart exceeding tolerance</strong> — cardiac dose above constraint</span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-w">Major</span></span><span>Isocentre too deep — positioned in <strong>lung and heart</strong></span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-w">Major</span></span><span>Fields <strong>crossing midline</strong> — unnecessary contralateral breast dose</span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-w">Major</span></span><span><strong>No flash applied</strong> — superficial breast under-coverage</span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-b">Minor</span></span><span>No wedges, no dose shaping — poor homogeneity, though secondary to the above</span></div>
+    </div>
+    <div>
+      <h2 style="font-size:38px;margin-bottom:24px;">What would have to change?</h2>
+      <ul class="blist" style="gap:16px;margin-bottom:28px;">
+        <li style="font-size:21px;">Move isocentre to <strong>breast tissue</strong>, shallower depth</li>
+        <li style="font-size:21px;">Normalisation point into <strong>stable breast tissue</strong></li>
+        <li style="font-size:21px;">Tangent borders must <strong>not cross midline</strong></li>
+        <li style="font-size:21px;">Add <strong>≥2 cm flash</strong> beyond breast tissue</li>
+        <li style="font-size:21px;">Add <strong>wedges or FiF</strong> to reduce hotspot &lt;115%</li>
+        <li style="font-size:21px;">Re-check heart and lung on DVH after re-plan</li>
+      </ul>
+      <div class="hbox crit" style="padding:18px 24px;">
+        <p style="font-size:19px;"><strong>This plan cannot be treated as drawn.</strong> The normalisation point failure alone invalidates every DVH number.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 11 — ACCEPTABLE + GOOD (image slots)
+     ══════════════════════════════════════════════ -->
+<section data-label="Breast — Acceptable vs Good">
+<div class="slide-inner" style="padding-bottom:40px;">
+  <p class="slide-label">Case 1 · Breast · Plans B &amp; C — Acceptable → Good</p>
+  <div class="slide-rule"></div>
+  <div class="two-col" style="gap:40px;align-items:start;flex:1;">
+    <div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
+        <h3 style="font-size:30px;">Plan B — <span style="color:var(--orange);">Acceptable</span></h3>
+        <span style="font-family:var(--mono);font-size:13px;color:var(--orange);background:rgba(233,113,50,.1);padding:4px 12px;border-radius:12px;">Wedges</span>
+      </div>
+      <div class="slot-wrap" style="height:260px;margin-bottom:14px;">
+        <image-slot id="breast-acc-img" style="width:100%;height:100%;" shape="rounded" radius="8" placeholder="Drop Plan B screenshot"></image-slot>
+      </div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:19px;">Good isocentre · norm point in breast tissue · ≥2 cm flash</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:19px;">Hotspot &lt;115% · heart &amp; lung within tolerance</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-w">~</span></span><span style="font-size:19px;">Wedges improve HI — better than Plan A, achievable further improvement with FiF</span></div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
+        <h3 style="font-size:30px;">Plan C — <span style="color:#4ec97a;">Good</span></h3>
+        <span style="font-family:var(--mono);font-size:13px;color:#4ec97a;background:rgba(41,163,91,.1);padding:4px 12px;border-radius:12px;">Field-in-Field</span>
+      </div>
+      <div class="slot-wrap" style="height:260px;margin-bottom:14px;">
+        <image-slot id="breast-good-img" style="width:100%;height:100%;" shape="rounded" radius="8" placeholder="Drop Plan C screenshot"></image-slot>
+      </div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:19px;">Same coverage, same OAR sparing as Plan B</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:19px;">Hotspot &lt;110% · HI &lt;0.1 — homogeneous</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:19px;">FiF sub-segments selectively remove emerging hotspots</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 12 — BREAST TEACHING MOMENT
+     ══════════════════════════════════════════════ -->
+<section class="teach-bg" data-label="Breast — Teaching">
+<div class="slide-inner">
+  <p class="teach-label">Teaching Moment · Case 1</p>
+  <div style="width:64px;height:3px;background:var(--green);border-radius:2px;margin-bottom:36px;"></div>
+  <h2 style="margin-bottom:40px;">Why homogeneity matters — and how to achieve it</h2>
+  <div class="three-col" style="gap:28px;">
+    <div class="card" style="border-top:3px solid #f06a6a;">
+      <span class="card-label" style="color:#f06a6a;">Bad — no shaping</span>
+      <p style="font-family:var(--mono);font-size:28px;font-weight:700;color:#f06a6a;margin-bottom:10px;">HI &gt;0.2</p>
+      <p style="font-size:19px;color:var(--dim);">No wedges, no compensation for the sloping breast contour. Dose piles up at the beam entry; hotspot is large and often exits the PTV.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);">
+      <span class="card-label" style="color:var(--orange);">Acceptable — wedges</span>
+      <p style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--orange);margin-bottom:10px;">HI &lt;0.15</p>
+      <p style="font-size:19px;color:var(--dim);">Wedge tilts the isodoses to compensate for the sloping surface. Hotspot &lt;115%. Clinically deliverable and safe — FiF not always needed.</p>
+    </div>
+    <div class="card" style="border-top:3px solid #4ec97a;">
+      <span class="card-label" style="color:#4ec97a;">Good — field-in-field</span>
+      <p style="font-family:var(--mono);font-size:28px;font-weight:700;color:#4ec97a;margin-bottom:10px;">HI &lt;0.10</p>
+      <p style="font-size:19px;color:var(--dim);">FiF sub-segments are forward-planned to block the peak of each emerging hotspot. Same coverage and OAR sparing — just flatter dose.</p>
+    </div>
+  </div>
+  <div class="hbox good" style="margin-top:32px;">
+    <p style="font-size:22px;">The three plans differ mainly in <strong>dose shaping</strong> — none → wedges → FiF. Coverage and OAR sparing converge; <strong>homogeneity</strong> separates acceptable from good. Bad is bad for a different reason entirely: the normalisation point invalidated the whole DVH.</p>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 13 — CASE 2 OPENER
+     ══════════════════════════════════════════════ -->
+<section class="case-opener" data-label="Case 2 Intro">
+<div class="section-num">02</div>
+<div class="slide-inner" style="justify-content:center;">
+  <p class="slide-label">Case 2 · Prostate</p>
+  <div class="slide-rule"></div>
+  <h1 style="font-size:80px;margin-bottom:20px;">3-Field Prostate — Trade-off</h1>
+  <p class="sub" style="font-size:28px;max-width:920px;margin-bottom:40px;">One plan. Coverage is good. Something is wrong. Your job is to find it — and decide what to do about it.</p>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:44px;">
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Prescription</span>
+      <p style="font-family:var(--mono);font-size:22px;color:var(--white);font-weight:600;">2.5 Gy × 27 = 67.5 Gy</p>
+      <p style="font-size:18px;color:var(--dim);margin-top:6px;">Prostate + proximal SV · 3-field</p>
+    </div>
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Technique</span>
+      <p style="font-size:20px;color:var(--dim);line-height:1.5;">AP + 2 laterals · no boost phase · full bladder protocol</p>
+    </div>
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Key OARs</span>
+      <p style="font-size:20px;color:var(--dim);line-height:1.5;">Rectum · Penile bulb · Bladder · Femoral heads · Small bowel</p>
+    </div>
+  </div>
+  <div class="timer" style="font-size:18px;">5 minutes — work through the scorecard. Flag what's over tolerance and by how much.</div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 14 — PROSTATE PLAN (image slot + findings)
+     ══════════════════════════════════════════════ -->
+<section data-label="Prostate — Trade-off Findings">
+<div class="slide-inner">
+  <p class="slide-label">Case 2 · Prostate · Trade-off</p>
+  <div class="slide-rule"></div>
+  <div class="two-col" style="gap:48px;align-items:start;flex:1;">
+    <div>
+      <div class="slot-wrap" style="height:480px;margin-bottom:16px;">
+        <image-slot id="prostate-dvh" style="width:100%;height:100%;" shape="rounded" radius="10" placeholder="Drop DVH / isodose screenshot"></image-slot>
+      </div>
+      <p class="slot-caption">3-Field Prostate Plan</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <h2 style="font-size:36px;margin-bottom:22px;">What the numbers show</h2>
+      <div class="finding"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:20px;"><strong>Coverage:</strong> CTV D98 ≈ 99.2% · PTV D98 ≈ 96.6% — good and maintained</span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-c">↑</span></span><span style="font-size:20px;"><strong>Rectum:</strong> V55 ≈ 37.9% · V59 ≈ 32.9% — <strong style="color:#f06a6a;">over tolerance</strong> at the posterior margin</span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-c">↑</span></span><span style="font-size:20px;"><strong>Penile bulb</strong> mean ≈ 62.8 Gy — <strong style="color:#f06a6a;">significantly above 52 Gy</strong></span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:20px;"><strong>Small bowel:</strong> mostly within limits — minor focal V52 exceedance</span></div>
+      <div class="finding"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:20px;"><strong>Bladder</strong> well controlled · <strong>Femoral heads</strong> within tolerance</span></div>
+      <div class="hbox warn" style="margin-top:20px;padding:20px 24px;">
+        <span class="card-label" style="color:var(--orange);">The trade-off</span>
+        <p style="font-size:19px;">Reducing rectum / penile-bulb dose would compromise <strong style="color:var(--white);">posterior target coverage</strong>. The plan prioritises coverage — this is a clinical decision, not a simple optimisation fix.</p>
+      </div>
+      <div style="margin-top:14px;padding:16px 20px;background:rgba(15,158,213,.06);border-radius:10px;border:1px solid rgba(15,158,213,.15);">
+        <p style="font-size:18px;color:var(--dim);">Discussion: <strong style="color:var(--white);">Rectum V55 and penile bulb are both above tolerance.</strong> What is the clinical priority? Accept, modify, or escalate?</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 15 — PROSTATE TEACHING
+     ══════════════════════════════════════════════ -->
+<section class="teach-bg" data-label="Prostate — Teaching">
+<div class="slide-inner">
+  <p class="teach-label">Teaching Moment · Case 2</p>
+  <div style="width:64px;height:3px;background:var(--green);border-radius:2px;margin-bottom:36px;"></div>
+  <h2 style="margin-bottom:36px;">The posterior margin — where coverage and rectal sparing conflict</h2>
+  <div class="two-col" style="gap:56px;">
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div class="card" style="border-left:3px solid var(--orange);">
+        <span class="card-label" style="color:var(--orange);">Why the rectum is always at risk</span>
+        <p style="font-size:20px;color:var(--dim);line-height:1.55;">The posterior PTV margin (prostate–rectum interface) has no tissue buffer. Any meaningful coverage of the posterior prostate exposes the anterior rectal wall. This is the fundamental geometric tension in prostate planning — it cannot be engineered away, only managed.</p>
+      </div>
+      <div class="card" style="border-left:3px solid #f06a6a;">
+        <span class="card-label" style="color:#f06a6a;">Penile bulb — why it matters</span>
+        <p style="font-size:20px;color:var(--dim);line-height:1.55;">The penile bulb lies immediately inferior to the prostate. High dose (mean &gt;52 Gy) is associated with erectile dysfunction — a significant long-term QoL concern, especially in younger patients. At 62.8 Gy mean, this plan exceeds the QUANTEC limit substantially.</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div class="card" style="border-left:3px solid var(--cyan);">
+        <span class="card-label">QUANTEC — the working reference</span>
+        <p style="font-size:20px;color:var(--dim);line-height:1.55;">Rectum: V70 &lt;20%, V50 &lt;50% (primary limit for late rectal bleeding ≥ grade 2). These constraints come from conventionally fractionated 3DCRT data. If you change fractionation, convert to EQD₂ — never read a 2 Gy/fr number onto a hypofractionated plan.</p>
+      </div>
+      <div class="hbox good" style="padding:22px 28px;">
+        <span class="card-label">What to do with this plan</span>
+        <p style="font-size:20px;color:var(--dim);line-height:1.5;">Document the trade-off explicitly. Senior discussion before approval. Consider whether inferior margin reduction preserves penile bulb; verify posterior margin coverage doesn't fall below CTV. The conversation — not the plan alone — is what matters here.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 16 — CASE 3 OPENER
+     ══════════════════════════════════════════════ -->
+<section class="case-opener" data-label="Case 3 Intro">
+<div class="section-num">03</div>
+<div class="slide-inner" style="justify-content:center;">
+  <p class="slide-label">Case 3 · Pituitary</p>
+  <div class="slide-rule"></div>
+  <h1 style="font-size:80px;margin-bottom:20px;">Pituitary Adenoma</h1>
+  <p class="sub" style="font-size:28px;max-width:920px;margin-bottom:40px;">Coplanar vs non-coplanar. Both plans are clinically deliverable. One is better — and there is a marginal OAR finding that <em>requires</em> documentation regardless of which you choose.</p>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:44px;">
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Prescription</span>
+      <p style="font-family:var(--mono);font-size:22px;color:var(--white);font-weight:600;">1.8 Gy × 28 = 50.4 Gy</p>
+      <p style="font-size:18px;color:var(--dim);margin-top:6px;">Pituitary fossa + margin</p>
+    </div>
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Plans</span>
+      <p style="font-size:20px;color:var(--dim);line-height:1.5;">Plan A: Coplanar only · Plan B: Non-coplanar arrangement</p>
+    </div>
+    <div class="card" style="padding:18px 28px;flex:1;min-width:240px;">
+      <span class="card-label">Key OARs</span>
+      <p style="font-size:20px;color:var(--dim);line-height:1.5;">Optic chiasm · Optic nerves · Brainstem · Brain</p>
+    </div>
+  </div>
+  <div class="timer" style="font-size:18px;">5 minutes — score the coplanar plan. Pay close attention to the optic chiasm.</div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 17 — PITUITARY COMPARISON
+     ══════════════════════════════════════════════ -->
+<section data-label="Pituitary — Comparison">
+<div class="slide-inner" style="padding-bottom:40px;">
+  <p class="slide-label">Case 3 · Pituitary · Coplanar vs Non-Coplanar</p>
+  <div class="slide-rule"></div>
+  <div class="two-col" style="gap:40px;align-items:start;flex:1;">
+    <div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
+        <h3 style="font-size:28px;">Plan A — <span style="color:var(--orange);">Coplanar (Acceptable)</span></h3>
+      </div>
+      <div class="slot-wrap" style="height:240px;margin-bottom:14px;">
+        <image-slot id="pituitary-cop" style="width:100%;height:100%;" shape="rounded" radius="8" placeholder="Drop coplanar plan screenshot"></image-slot>
+      </div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-w">!</span></span><span style="font-size:18px;"><strong>Optic chiasm max 54.9 Gy</strong> — above 54 Gy QUANTEC limit. Requires explicit documentation and senior discussion.</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-w">~</span></span><span style="font-size:18px;"><strong>PTV min 41.75 Gy</strong> — inferior coverage reduced</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:18px;">Brainstem max 52.5 Gy · mean ~11 Gy · no major errors</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-b">note</span></span><span style="font-size:18px;">Sphenoid air-sinus undercoverage (88.7%) — physics-driven, document it</span></div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
+        <h3 style="font-size:28px;">Plan B — <span style="color:#4ec97a;">Non-coplanar (Good)</span></h3>
+      </div>
+      <div class="slot-wrap" style="height:240px;margin-bottom:14px;">
+        <image-slot id="pituitary-noncop" style="width:100%;height:100%;" shape="rounded" radius="8" placeholder="Drop non-coplanar plan screenshot"></image-slot>
+      </div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-w">!</span></span><span style="font-size:18px;"><strong>Optic chiasm max ≈ 54.9 Gy</strong> — unchanged. Still requires documentation regardless of plan choice.</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">↑</span></span><span style="font-size:18px;"><strong>PTV min ≈ 43.9 Gy</strong> — inferior coverage improved ~2.1 Gy</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">↓</span></span><span style="font-size:18px;">Brainstem mean ~9.7 Gy (↓1.6 Gy) · improved integral dose distribution</span></div>
+      <div class="finding" style="padding:10px 0;"><span class="f-tag"><span class="tag tag-g">✓</span></span><span style="font-size:18px;">All improvements achieved without compromising any other structure</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 18 — PITUITARY TEACHING
+     ══════════════════════════════════════════════ -->
+<section class="teach-bg" data-label="Pituitary — Teaching">
+<div class="slide-inner">
+  <p class="teach-label">Teaching Moment · Case 3</p>
+  <div style="width:64px;height:3px;background:var(--green);border-radius:2px;margin-bottom:36px;"></div>
+  <h2 style="margin-bottom:36px;">Pituitary fossa — proximity, hard limits &amp; non-coplanar geometry</h2>
+  <div class="two-col" style="gap:48px;">
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div class="card" style="border-left:3px solid #f06a6a;">
+        <span class="card-label" style="color:#f06a6a;">Chiasm at 54.9 Gy — a hard limit case</span>
+        <p style="font-size:20px;color:var(--dim);line-height:1.55;">The pituitary fossa sits immediately below the optic chiasm. PTV and chiasm are often adjacent or overlapping — coverage vs chiasm sparing is an intrinsic geometric tension, not a planning error. At 54.9 Gy (limit 54 Gy), explicit justification and senior sign-off are mandatory. Document the reasoning, not just the number.</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--cyan);">
+        <span class="card-label">Air cavity undercoverage — expected</span>
+        <p style="font-size:20px;color:var(--dim);line-height:1.55;">The sphenoid sinus has near-zero electron density. Undercoverage (88.7%) is physics-driven — not a planning failure. Document it, reassure the team, and resist the urge to over-dose adjacent structures to compensate.</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div class="card" style="border-left:3px solid var(--green);">
+        <span class="card-label" style="color:var(--green);">Why non-coplanar fields help</span>
+        <p style="font-size:20px;color:var(--dim);line-height:1.55;">Non-coplanar beams enter across a wider range of skull-base angles, spreading the entrance dose and reducing the contribution from any one direction. The result: better inferior PTV coverage (+2.1 Gy), lower brainstem mean (−1.6 Gy), and reduced integral brain dose — without worsening the chiasm, because the chiasm is a geometric constraint independent of the beam arrangement.</p>
+      </div>
+      <div class="hbox" style="padding:22px 28px;">
+        <span class="card-label">The lesson</span>
+        <p style="font-size:21px;color:var(--dim);line-height:1.5;">Some OAR findings cannot be optimised away — they are geometric facts. The planner's job is to <strong style="color:var(--white);">recognise them, document them, and make the best plan possible within the constraint</strong> — not pretend they don't exist.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 19 — SELF-STUDY
+     ══════════════════════════════════════════════ -->
+<section data-label="Self-Study Cases">
+<div class="slide-inner">
+  <p class="slide-label">Self-study — complete before next contact</p>
+  <div class="slide-rule"></div>
+  <h2 style="margin-bottom:36px;">Two more cases — same framework, same scorecard</h2>
+  <div class="two-col" style="gap:36px;align-items:start;">
+    <div class="card" style="border-top:3px solid var(--cyan);padding:36px 40px;">
+      <span class="card-label">Self-Study Case A</span>
+      <h3 style="font-size:32px;margin-bottom:12px;">02 Gynaecology</h3>
+      <p style="font-size:20px;color:var(--dim);line-height:1.55;margin-bottom:20px;">Cervical carcinoma — whole-pelvis irradiation. <strong style="color:var(--white);">45 Gy / 25 Fr.</strong> A 4-field box trade-off: better rectum sparing vs more small bowel exposure (AP–PA). Is this a clinically acceptable compromise?</p>
+      <ul class="blist" style="gap:10px;">
+        <li style="font-size:19px;">Open the full workshop tool</li>
+        <li style="font-size:19px;">Score every FCB-CHOPS row independently</li>
+        <li style="font-size:19px;">Reveal ideal answers only after all rows are scored</li>
+        <li style="font-size:19px;">Check your reasoning against the discussion notes</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);padding:36px 40px;">
+      <span class="card-label" style="color:var(--orange);">Self-Study Case B</span>
+      <h3 style="font-size:32px;margin-bottom:12px;">05 H&amp;N — Parotid Tumour</h3>
+      <p style="font-size:20px;color:var(--dim);line-height:1.55;margin-bottom:20px;">Parotid gland tumour. <strong style="color:var(--white);">60 Gy / 30 Fr.</strong> 4-field vs 3-field. Removing beams through the contralateral side halves the contralateral parotid mean dose (3.30 → 1.14 Gy) — a long-term xerostomia lesson.</p>
+      <ul class="blist" style="gap:10px;">
+        <li style="font-size:19px;">Note: the electron/photon match is a real summation scenario</li>
+        <li style="font-size:19px;">Check spinal cord and brainstem in both plans</li>
+        <li style="font-size:19px;">Key question: does fewer fields = worse plan?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hbox" style="margin-top:28px;padding:18px 28px;">
+    <p style="font-size:20px;"><strong>Workshop tool:</strong> open the self-study tab in the full 5-case HTML file — all scorecards, ideal answers, and discussion blocks are waiting for you.</p>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 20 — WRAP-UP
+     ══════════════════════════════════════════════ -->
+<section data-label="Wrap-up">
+<div class="slide-inner">
+  <p class="slide-label">Wrap-up · Key takeaways</p>
+  <div class="slide-rule"></div>
+  <div class="two-col" style="gap:80px;">
+    <div>
+      <h2 style="font-size:44px;margin-bottom:32px;">What to carry forward</h2>
+      <div class="takeaway"><div class="tk-num">1</div><div class="tk-text"><strong>FCB-CHOPS every time.</strong> The framework is a safety net — work in whatever order the plan demands, but close no plan until all eight boxes are checked.</div></div>
+      <div class="takeaway"><div class="tk-num">2</div><div class="tk-text"><strong>DVH screens; slices diagnose.</strong> No spatial information. Always scroll the isodoses on every plane before you trust the DVH.</div></div>
+      <div class="takeaway"><div class="tk-num">3</div><div class="tk-text"><strong>Match metric to organ architecture.</strong> Serial → Dmax / D1cc. Parallel → mean or Vx Gy. Getting this wrong is a class of error.</div></div>
+      <div class="takeaway"><div class="tk-num">4</div><div class="tk-text"><strong>Normalisation point matters.</strong> In unstable tissue — lung, air, density interface — every DVH number is unreliable. Always verify.</div></div>
+      <div class="takeaway"><div class="tk-num">5</div><div class="tk-text"><strong>Document every trade-off.</strong> The conversation — OAR above tolerance, clinical justification, senior sign-off — is as important as the plan itself.</div></div>
+    </div>
+    <div>
+      <h2 style="font-size:44px;margin-bottom:32px;">References</h2>
+      <div style="display:flex;flex-direction:column;gap:18px;">
+        <div class="card" style="padding:20px 24px;">
+          <span class="card-label">Framework</span>
+          <p style="font-size:18px;color:var(--dim);line-height:1.5;">FCB-CHOPS — Weisman et al., <em>Adv Radiat Oncol</em>, 2024</p>
+        </div>
+        <div class="card" style="padding:20px 24px;">
+          <span class="card-label">ICRU</span>
+          <p style="font-size:18px;color:var(--dim);line-height:1.5;">Reports 50, 62 &amp; 83 — GTV/CTV/ITV/PTV definition; dose reporting</p>
+        </div>
+        <div class="card" style="padding:20px 24px;">
+          <span class="card-label">Tolerance doses</span>
+          <p style="font-size:18px;color:var(--dim);line-height:1.5;">QUANTEC — <em>IJROBP</em> 2010;76(3) Suppl · Emami et al. 1991 · HyTEC (SBRT)</p>
+        </div>
+        <div class="card" style="padding:20px 24px;">
+          <span class="card-label">Text</span>
+          <p style="font-size:18px;color:var(--dim);line-height:1.5;">Khan, <em>Treatment Planning in Radiation Oncology</em></p>
+        </div>
+      </div>
+      <div class="hbox" style="margin-top:20px;padding:18px 24px;">
+        <p style="font-size:19px;">"A good plan is a <strong>documented compromise</strong> — target covered, OARs safe, technically sound, and every trade-off articulated."</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+</deck-stage>
+
+<template id="__bundler_thumbnail" data-bg-color="#0e2841">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0e2841"/>
+    <rect x="80" y="80" width="400" height="12" rx="6" fill="#0f9ed5" opacity="0.8"/>
+    <rect x="80" y="130" width="700" height="60" rx="8" fill="rgba(255,255,255,0.05)"/>
+    <rect x="80" y="220" width="1040" height="480" rx="16" fill="#163554"/>
+    <rect x="110" y="260" width="200" height="120" rx="10" fill="#1e4a6e"/>
+    <rect x="330" y="260" width="200" height="120" rx="10" fill="#1e4a6e"/>
+    <rect x="550" y="260" width="200" height="120" rx="10" fill="#1e4a6e"/>
+    <rect x="770" y="260" width="200" height="120" rx="10" fill="#1e4a6e"/>
+    <rect x="110" y="420" width="300" height="240" rx="10" fill="#1e4a6e" opacity="0.7"/>
+    <rect x="440" y="420" width="300" height="240" rx="10" fill="#1e4a6e" opacity="0.7"/>
+    <rect x="770" y="420" width="300" height="240" rx="10" fill="#1e4a6e" opacity="0.7"/>
+    <text x="600" y="760" font-family="sans-serif" font-size="24" fill="rgba(255,255,255,0.3)" text-anchor="middle">3DCRT Plan Evaluation Workshop · UCT/GSH 2026</text>
+  </svg>
+</template>
+
+<script src="deck-stage.js"></script>
+<script src="image-slot.js"></script>
+</body>
+</html>
